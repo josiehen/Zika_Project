@@ -1,0 +1,21 @@
+#!/Users/josiehen/anaconda/bin/python
+# -------------------------------------------------------
+#PREAMBLE
+
+import numpy as np
+import MDAnalysis
+from MDAnalysis.analysis import hbonds
+import matplotlib.pyplot as plt
+
+pdb = syst.argv[1] #parameter file (truncated.prmtop?)
+traj = syst.argv[2] #production run to analyze
+frams = syst.argv[3] #number of frames
+
+#MAIN
+
+u = MDAnalysis.Universe('%s' %(pdb), '%s' %(traj))
+H = u.select_atoms('name H')
+NO = u.select_atoms('name O or name N')
+pro = u.select_atoms('protein')
+hb_ac = hbonds.HydrogenBondAutoCorrel(u, acceptors = u.atoms.pro, hydrogens = u.atoms.H, donors = u.atoms,NO,bond_sample_time = 2, nruns = 1, nsamples = 'frames')
+
