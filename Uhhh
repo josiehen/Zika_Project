@@ -1,0 +1,15 @@
+#!/Users/josiehen/anaconda/bin/python
+# ----------------------------------
+import numpy
+import MDAnalysis
+import MDAnalysis.analysis.hbonds
+
+#Variables
+pdb = 'truncated.prmtop'     #parameter file
+traj = 'production.1.dcd'    #production run
+
+u = MDAnalysis.Universe('%s' %(pdb), '%s' %(traj))
+h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = 'protein', selection2 = 'protein', selection1_type = 'both', selection2_type = 'both', distance = 3.0, angle = 120.0)
+
+h.run()
+h.generate_table()
