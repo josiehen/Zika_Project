@@ -12,4 +12,6 @@ u = MDAnalysis.Universe('%s' %(pdb), '%s' %(traj))
 h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = 'protein', selection2 = 'protein', selection1_type = 'both', selection2_type = 'both', distance = 3.0, angle = 120.0)
 
 h.run()
+print h.timeseries
 h.generate_table()
+h.save_table(filename='hbond_table')
