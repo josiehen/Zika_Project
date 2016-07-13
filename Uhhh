@@ -1,17 +1,31 @@
 #!/Users/josiehen/anaconda/bin/python
 # ----------------------------------
 import numpy
+import sys
 import MDAnalysis
 import MDAnalysis.analysis.hbonds
 
+#Calculate number and type of H bonds in each frmae of rajectory for specified regions
+
 #Variables
-pdb = 'truncated.prmtop'     #parameter file
-traj = 'production.1.dcd'    #production run
+pdb = sys.argv[1]     #parameter file (.prmbop, .pdb)
+traj = sys.argv[2]    #production run
 
+#Define a universe, make H bond donor and acceptor selections, denote start, stop, and step
 u = MDAnalysis.Universe('%s' %(pdb), '%s' %(traj))
-h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = 'protein', selection2 = 'protein', selection1_type = 'both', selection2_type = 'both', distance = 3.0, angle = 120.0)
+h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = 'protein and resid 80:92', selection2 = 'protein', selection1_type = 'donor', step=1000, distance = 3.0, angle = 120.0) #Note: selection1_type tells whether selection one can be an H bond donor, acceptor, or both.
 
+#Returns a massive list with the type or hydrogen bond, between what atoms
 h.run()
-print h.timeseries
-h.generate_table()
-h.save_table(filename='hbond_table')
+data = h.timeseries
+out1 = open('hbonds.dat','w')
+out1.write('%s' %(data))
+out1.close()
+
+#Returns a less massive list of the number of H bonds per timestep
+amt = hcount_by_time()
+out2 = open('Hbonds_per_timestep.dat','w')
+out2.write('%s' %(amt))
+out2.close()
+
+# ------------------------------
