@@ -8,7 +8,7 @@ import MDAnalysis.analysis.hbonds
 #Calculate number and type of H bonds in each frmae of rajectory for specified regions
 
 #Variables
-pdb = sys.argv[1]     #parameter file (.prmbop, .pdb)
+pdb = sys.argv[1]     #parameter file (.prmtop, .pdb)
 traj = sys.argv[2]    #production run
 
 #Define a universe, make H bond donor and acceptor selections, denote start, stop, and step
@@ -28,4 +28,9 @@ out2 = open('Hbonds_per_timestep.dat','w')
 out2.write('%s' %(amt))
 out2.close()
 
+#Gives a more readable format of hydrogen bond data, but without distance or angle information. Shows donor and acceptor index in 0,1 based numbers, donor residue name and id, donor heavy atom, donor atom, and same for acceptor atom, as well as timestep.
+hstep = h.timesteps_by_type()
+out3 = open('Htype_by_timestep.dat','w')
+out3.write('%s' %(hstep))
+out3.close()
 # ------------------------------
