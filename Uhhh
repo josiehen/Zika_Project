@@ -11,6 +11,12 @@ import MDAnalysis.analysis.hbonds
 pdb = sys.argv[1]     #parameter file (.prmtop, .pdb)
 traj = sys.argv[2]    #production run
 
+#Subroutine
+flush = sys.stdout.flush          
+def ffprint(string):
+  print '%s' %(string)
+  flush()
+
 #Define a universe, make H bond donor and acceptor selections, denote start, stop, and step
 u = MDAnalysis.Universe('%s' %(pdb), '%s' %(traj))
 h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = 'protein and resid 80:92', selection2 = 'protein', selection1_type = 'donor', step=1000, distance = 3.0, angle = 120.0) #Note: selection1_type tells whether selection one can be an H bond donor, acceptor, or both.
@@ -21,6 +27,32 @@ data = h.timeseries
 out1 = open('hbonds.dat','w')
 out1.write('%s' %(data))
 out1.close()
+
+#Print Hbond data to screen in easy-to-read format (for short selections!)
+frames = len(data)                  #Number of frames specified in trajectory
+ffprint('Frames = %s\n' %(frames))
+ffprint('Hbonds per frame:')
+for i in data:
+        ffprint('\nFrame')
+        numbah = len(i)             #Number of hydrogen bonds in a given frame
+        ffprint('Numbah bonds: %s' %(numbah))
+        for j in i:
+                print j             #Descriptor of hbond type, distance, etc in column format
+
+#Write easy-to-read format to file readable.dat
+out4 = open('readable.dat','w')
+frames = len(data)
+out4.write('Frames = %s\n' %(frames))
+out4.write('Hbonds per frame:\n\n')
+for i in data:
+        out4.write('\nFrame - ')
+        numbah = len(i)
+        out4.write('Numbah bonds: %s\n' %(numbah))
+        for j in i:
+                out4.write('%s\n' %(j))
+out4.close()
+
+
 
 #Returns a less massive list of the number of H bonds per timestep
 amt = hcount_by_time()
