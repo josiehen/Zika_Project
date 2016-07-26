@@ -1,0 +1,6 @@
+# Selections for H bonding loop
+# Notation: [descriptor, selection1, selection2, selection1_type]
+sel = []
+sel.append(['LB3B4','protein and resid 80:92','protein and not resid 80:92','both'])
+sel.append(['top_loop', 'protein and resid 175:190','protein and resid 200:217','both'])
+sel.append(['ssRNA_protein','protein','nucleic and not resname adp and not resname atp','both'])
