@@ -24,7 +24,7 @@ def ffprint(string):
 # Calculate number of Hbonds for a given selection (in hsel_list) by timestep/frame over a series of prod runs
 
 # Append the sel list to u_sel, another list
-ffprint('Count sellist')
+#ffprint('Count sellist')
 nSel = len(sel)                 # Count the sel list
 u_sel = []                      # Create an empty list u_sel
 for i in range(nSel):
@@ -44,8 +44,9 @@ while start <= end:
   for i in range(nSel):
     sel1 = u_sel[i][1]                  # First selection from sel_list
     sel2 = u_sel[i][2]                  # Second selection
-    out = open('%s.%s.hbonds.dat' %(system,u_sel[i][0]),'a')        # This file, when done, will contain information from all analyzed production runs for a given selection
-    h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = sel1, selection2 = sel2, selection1_type = 'both', step = 1000, distance = 3.0, angle = 120.0)
+    sel3 = u_sel[i][3]                  # Donor or acceptor
+    out7 = open('%s.%s.%s.hbonds.dat' %(u_sel[i][4],system,u_sel[i][0]),'a')        # opens file for each selection, appends
+    h = MDAnalysis.analysis.hbonds.HydrogenBondAnalysis(u, selection1 = sel1, selection2 = sel2, selection1_type = sel3, step = 1000, acceptors = ['specify custom acceptors here if necessary'], donors = ['likewise, or delete these'], distance = 3.0, angle = 120.0)
     h.run()
     data = h.count_by_time()            # Program to count hydrogen bonds by timestep
     for i in data:
@@ -54,4 +55,4 @@ while start <= end:
         out.write('%s   ' %(bonds))
   start += 1
   
-out.close()
+out7.close()
