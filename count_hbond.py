@@ -52,7 +52,7 @@ while start <= end:
     for i in data:
         #print i[1]                     # Sanity check, should give number H bonds in frame per frame
         bonds = i[1]                    # Select number hbonds only
-        out.write('%s   ' %(bonds))
+        out7.write('%s   ' %(bonds))
   start += 1
   
 out7.close()
