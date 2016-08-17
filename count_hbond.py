@@ -4,7 +4,7 @@ import numpy
 import sys
 import MDAnalysis
 import MDAnalysis.analysis.hbonds
-from hsel_list impiort *
+from hsel_list import *
 
 # Define variables
 pdb1 = sys.argv[1]           # Parameter file (.prmtop, .pdb)
