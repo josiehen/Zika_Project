@@ -23,9 +23,9 @@ def ffprint(string):
         flush()
 
 pro = 'protein'
-sugar = 'nucleic and name (O5 or C5 or H5 or C4 or H4 or O4 or C1 or H1 or C3 or H3 or C2 or H2 or O2 or HO2 or O3)'
-5_sugar = 'nucleic and name (HO5 or O5 or C5 or H5 or C4 or H4 or O4 or C1 or H1 or C3 or H3 or C2 or H2 or O2 or HO2 or O3)'
-3_sugar = 'nucleic and name (O5 or C5 or H5 or C4 or H4 or O4 or C1 or H1 or C3 or H3 or C2 or H2 or O2 or HO2 or O3 or HO3)'
+sugar = "nucleic and name (O5' or H5'' or C5' or H5' or C4' or H4' or O4' or C1' or H1' or C3' or H3' or C2' or H2' or O2' or HO2' or O3')"
+5_sugar = "nucleic and name (HO5' or H5'' or O5' or C5' or H5' or C4' or H4' or O4' or C1' or H1' or C3' or H3' or C2' or H2' or O2' or HO2' or O3')"
+3_sugar = "nucleic and name (O5' or C5' or H5'' or H5' or C4' or H4' or O4' or C1' or H1' or C3' or H3' or C2' or H2' or O2' or HO2' or O3' or HO3')"
 phos = 'nucleic and name (P or OP1 or OP2)'
 A_base = 'nucleic and name (N9 or C8 or H8 or N7 or C5 or C6 or N6 or H61 or H62 or N1 or C2 or H2 or N3 or C4)'
 G_base = 'nucleic and name (N9 or C8 or H8 or N7 or C5 or C6 or O6 or N1 or H1 or C2 or N2 or H21 or H22 or N3 or C4)'
@@ -34,9 +34,8 @@ U_base = 'nucleic and name (N1 or C6 or H6 or C5 or H5 or C4 or O4 or N3 or H3 o
 rna_res = 'nucleic and resname (A5 or A3 or A or G5 or G3 or G or C5 or C3 or C or U5 or U3 or U)'
 
 u = MDAnalysis.Universe(pdb)
-d_list = []
 
-u_prot = u.select_atoms(pro)
+d_list = []
 for i in range(rna_res):
         if resname == 'A or A5 or A3':
                 selA = u.select_atoms(A_base)
@@ -61,7 +60,7 @@ for i in range(rna_res):
                 d_list.append(selsug3)
         selphos = u.select_atoms(phos)
         d_list.append(selphos)
-
+u_prot = u.select_atoms(pro)
 nRes = len(u_prot.residues)
 mRNA = len(d_list)
 ffprint(Number res = '%s' Number rna = '%s' %(nRes,mRNA))
@@ -83,9 +82,9 @@ while start <= end:
                         compro = respro.center_of_mass()
                         for j in range(mRNA):
                                 comrna = d_list[j].center_of_mass()
-                                dist0, dist1 = euclid_dist(compro,comrna)
-                                avg_matrix[i,j] += dist0
-                                std_matrix[i,j] += dist1
+                                dist, dist2 = euclid_dist(compro,comrna)
+                                avg_matrix[i,j] += dist
+                                std_matrix[i,j] += dist2
 
         start +=1
 ffprint(nSteps)
