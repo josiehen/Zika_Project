@@ -1,5 +1,6 @@
 #!/Users/josiehen/anaconda/bin/python
 # -----------------------------------
+import MDAnalysis
 import numpy as np
 import sys
 from numpy.linalg import *
@@ -22,49 +23,57 @@ def ffprint(string):
         print '%s' %(string)
         flush()
 
+#Selections; shortened from saying 'or' inbetween each one
 pro = 'protein'
-sugar = "nucleic and name (O5' or H5'' or C5' or H5' or C4' or H4' or O4' or C1' or H1' or C3' or H3' or C2' or H2' or O2' or HO2' or O3')"
-5_sugar = "nucleic and name (HO5' or H5'' or O5' or C5' or H5' or C4' or H4' or O4' or C1' or H1' or C3' or H3' or C2' or H2' or O2' or HO2' or O3')"
-3_sugar = "nucleic and name (O5' or C5' or H5'' or H5' or C4' or H4' or O4' or C1' or H1' or C3' or H3' or C2' or H2' or O2' or HO2' or O3' or HO3')"
-phos = 'nucleic and name (P or OP1 or OP2)'
-A_base = 'nucleic and name (N9 or C8 or H8 or N7 or C5 or C6 or N6 or H61 or H62 or N1 or C2 or H2 or N3 or C4)'
-G_base = 'nucleic and name (N9 or C8 or H8 or N7 or C5 or C6 or O6 or N1 or H1 or C2 or N2 or H21 or H22 or N3 or C4)'
-C_base = 'nucleic and name (N1 or C6 or H6 or C5 or H5 or C4 or N4 or H41 or H42 or N3 or C2 or O2)'
-U_base = 'nucleic and name (N1 or C6 or H6 or C5 or H5 or C4 or O4 or N3 or H3 or C2 or O2)'
-rna_res = 'nucleic and resname (A5 or A3 or A or G5 or G3 or G or C5 or C3 or C or U5 or U3 or U)'
+sugar = "nucleic and name O5' H5'' C5' H5' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' "
+5_sugar = "nucleic and name HO5' H5'' O5' C5' H5' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' "
+3_sugar = "nucleic and name O5' C5' H5' H5'' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' HO3' "
+phos = 'nucleic and name P OP1 OP2'
+A_base = 'nucleic and name N9 C8 H8 N7 C5 C6 N6 H61 H62 N1 C2 H2 N3 C4'
+G_base = 'nucleic and name N9 C8 H8 N7 C5 C6 O6 N1 H1 C2 N2 H21 H22 N3 C4'
+C_base = 'nucleic and name N1 C6 H6 C5 H5 C4 N4 H41 H42 N3 C2 O2'
+U_base = 'nucleic and name N1 C6 H6 C5 H5 C4 O4 N3 H3 C2 O2'
+rna = 'nucleic or resname A5 A3 A G5 G3 G C5 C3 C U5 U3 U'
 
 u = MDAnalysis.Universe(pdb)
 
 d_list = []
+ressel = u.select_atoms(rna_res)
+rns_res = ressel.n_residues      #Selects residues in nucleic - before was just a list
+#Loop through RNA residues making selections. Changed a ton of 'if' statements to 'elif' or 'else'
 for i in range(rna_res):
         if resname == 'A or A5 or A3':
                 selA = u.select_atoms(A_base)
                 d_list.append(selA)
-        if resname == 'G or G5 or G3':
+        elif resname == 'G or G5 or G3':
                 selG = u.select_atoms(G_base)
                 d_list.append(selG)
-        if resname == 'C or C5 or C3':
+        elif resname == 'C or C5 or C3':
                 selC = u.select_atoms(C_base)
                 d_list.append(selC)
-        if resname == 'U or U5 or U3':
+        else:
                 selU = u.select_atoms(u_base)
                 d_list.append(selU)
+
         if resname == 'A5 or G5 or C5 or U5':
                 selsug5 = u.select_atoms(5_sugar)
                 d_list.append(selsug5)
-        if resname != 'A5 or A3 or G5 or G3 or C5 or G3 or U5 or U3':
+        elif resname != 'A5 or A3 or G5 or G3 or C5 or G3 or U5 or U3':
                 selsug = u.select_atoms(sugar)
                 d_list.append(selsug)
-        if resname == 'A3 or G3 or C3 or U3':
+        else: 
                 selsug3 = u.select_atoms(3_sugar)
                 d_list.append(selsug3)
+
         selphos = u.select_atoms(phos)
         d_list.append(selphos)
+
 u_prot = u.select_atoms(pro)
 nRes = len(u_prot.residues)
-mRNA = len(d_list)
+mRNA = len(d_list)            #d_list contains nucleic selections in order above
 ffprint(Number res = '%s' Number rna = '%s' %(nRes,mRNA))
 
+#Create empty numpy arrays filled with zeroes
 avg_matrix = zeros((nRes,mRNA))
 std_matrix = zeros((nRes,mRNA))
 
@@ -76,12 +85,15 @@ while start <= end:
         for ts in u.trajectory:
                 if ts.frame%1000 == 0:
                         ffprint('Working on timestep %d of trajectory %d' %(ts.frame, start))
-
+#For every timestep, calculate centers of mass for protein and nucleic residues
                 for i in range(nRes):
                         respro = u_prot.residues[i]
                         compro = respro.center_of_mass()
+                for i in range(mRNA):
+                        comrna = d_list[i].center_of_mass()
+#Here, make selections to calculate distances between COM and populate arrays
+                for i in range(nRes):
                         for j in range(mRNA):
-                                comrna = d_list[j].center_of_mass()
                                 dist, dist2 = euclid_dist(compro,comrna)
                                 avg_matrix[i,j] += dist
                                 std_matrix[i,j] += dist2
