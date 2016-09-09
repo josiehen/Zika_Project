@@ -25,8 +25,8 @@ def ffprint(string):
 #Selections; shortened from saying 'or' inbetween each one
 pro = 'protein'
 sugar = "nucleic and name O5' H5'' C5' H5' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' "
-5_sugar = "nucleic and name HO5' H5'' O5' C5' H5' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' "
-3_sugar = "nucleic and name O5' C5' H5' H5'' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' HO3' "
+sug5 = "nucleic and name HO5' H5'' O5' C5' H5' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' "
+sug3 = "nucleic and name O5' C5' H5' H5'' C4' H4' O4' C1' H1' C3' H3' C2' H2' O2' HO2' O3' HO3' "
 phos = 'nucleic and name P OP1 OP2'
 A_base = 'nucleic and name N9 C8 H8 N7 C5 C6 N6 H61 H62 N1 C2 H2 N3 C4'
 G_base = 'nucleic and name N9 C8 H8 N7 C5 C6 O6 N1 H1 C2 N2 H21 H22 N3 C4'
@@ -56,13 +56,13 @@ for i in range(rna_res):
                 d_list.append(selU)
 
         if resname == 'A5 or G5 or C5 or U5':
-                selsug5 = u.select_atoms(5_sugar)
+                selsug5 = u.select_atoms(sug5)
                 d_list.append(selsug5)
         elif resname != 'A5 or A3 or G5 or G3 or C5 or G3 or U5 or U3':
                 selsug = u.select_atoms(sugar)
                 d_list.append(selsug)
         else: 
-                selsug3 = u.select_atoms(3_sugar)
+                selsug3 = u.select_atoms(sug3)
                 d_list.append(selsug3)
 
         selphos = u.select_atoms(phos)
