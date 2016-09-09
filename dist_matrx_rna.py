@@ -1,4 +1,4 @@
-#!/Users/josiehen/anaconda/bin/python
+#!/mnt/lustre_fs/users/mjmcc/apps/python2.7/bin/python
 # -----------------------------------
 import MDAnalysis
 import numpy as np
@@ -8,11 +8,10 @@ from distance_functions import *
 
 # -----------------------------------
 
-pdb = sys.argv[1]
+pdb = sys.argv[1]               #Needs to be a .pdb with same number of atoms (used coordinates from frame 1, production 1)
 traj_loc = sys.argv[2]
 start = int(sys.argv[3])
 end = int(sys.argv[4])
-system = sys.argv[5]
 
 zeros = np.zeros
 square = np.square
@@ -38,10 +37,11 @@ rna = 'nucleic or resname A5 A3 A G5 G3 G C5 C3 C U5 U3 U'
 u = MDAnalysis.Universe(pdb)
 
 d_list = []
-ressel = u.select_atoms(rna_res)
-rns_res = ressel.n_residues      #Selects residues in nucleic - before was just a list
+ressel = u.select_atoms(rna)
+rna_res = ressel.n_residues      #Selects residues in nucleic - before was just a list
 #Loop through RNA residues making selections. Changed a ton of 'if' statements to 'elif' or 'else'
 for i in range(rna_res):
+        resname = ressel.residues[i].resname
         if resname == 'A or A5 or A3':
                 selA = u.select_atoms(A_base)
                 d_list.append(selA)
@@ -52,7 +52,7 @@ for i in range(rna_res):
                 selC = u.select_atoms(C_base)
                 d_list.append(selC)
         else:
-                selU = u.select_atoms(u_base)
+                selU = u.select_atoms(U_base)
                 d_list.append(selU)
 
         if resname == 'A5 or G5 or C5 or U5':
@@ -71,7 +71,6 @@ for i in range(rna_res):
 u_prot = u.select_atoms(pro)
 nRes = len(u_prot.residues)
 mRNA = len(d_list)            #d_list contains nucleic selections in order above
-ffprint(Number res = '%s' Number rna = '%s' %(nRes,mRNA))
 
 #Create empty numpy arrays filled with zeroes
 avg_matrix = zeros((nRes,mRNA))
@@ -105,8 +104,8 @@ avg_matrix /= nSteps
 std_matrix /= nSteps
 std_matrix = sqrt(std_matrix - square(avg_matrix))
 
-out1 = open('%03d.%03d.%s.avg_dist_mtx.dat' %(start,end,system))
-out2 = open('%03d.%03d.%s.stdv_dist_mtx.dat' %(start,end,system))
+out1 = open('%03d.%03d.avg_dist_mtx.dat' %(start,end))
+out2 = open('%03d.%03d.stdv_dist_mtx.dat' %(start,end))
 for i in range(nRes):
         for j in range(mRNA):
                 out1.write('%10f  ' %(avg_matrix[i,j]))
