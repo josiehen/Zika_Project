@@ -75,6 +75,8 @@ mRNA = len(d_list)            #d_list contains nucleic selections in order above
 #Create empty numpy arrays filled with zeroes
 avg_matrix = zeros((nRes,mRNA))
 std_matrix = zeros((nRes,mRNA))
+temp_rna_com = zeros((mRNA,3))
+temp_pro_com = zeros((nRes,3))
 
 nSteps = 0
 while start <= end:
@@ -86,14 +88,13 @@ while start <= end:
                         ffprint('Working on timestep %d of trajectory %d' %(ts.frame, start))
 #For every timestep, calculate centers of mass for protein and nucleic residues
                 for i in range(nRes):
-                        respro = u_prot.residues[i]
-                        compro = respro.center_of_mass()
+                        temp_pro_com[i] = u_prot.residues[i].center_of_mass()
                 for i in range(mRNA):
-                        comrna = d_list[i].center_of_mass()
+                        temp_rna_com[i] = d_list[i].center_of_mass()
 #Here, make selections to calculate distances between COM and populate arrays
                 for i in range(nRes):
                         for j in range(mRNA):
-                                dist, dist2 = euclid_dist(compro,comrna)
+                                dist, dist2 = euclid_dist(temp_pro_com[i],temp_pro_com[j])
                                 avg_matrix[i,j] += dist
                                 std_matrix[i,j] += dist2
 
@@ -104,6 +105,7 @@ avg_matrix /= nSteps
 std_matrix /= nSteps
 std_matrix = sqrt(std_matrix - square(avg_matrix))
 
+start = int(sys.argv[3])
 out1 = open('%03d.%03d.avg_dist_mtx.dat' %(start,end))
 out2 = open('%03d.%03d.stdv_dist_mtx.dat' %(start,end))
 for i in range(nRes):
