@@ -18,7 +18,7 @@ u = MDAnalysis.Universe('%s' %(pdb1))
 # Subroutine
 flush = sys.stdout.flush
 def ffprint(string):
-    print '%s' %zstring)
+    print '%s' %(string)
     flush()
 
 # Calculate number of Hbonds for a given selection (in hsel_list) by timestep/frame over a series of prod runs
@@ -39,7 +39,7 @@ for i in range(nSel):
 ffprint('Begin traj analysis')
 while start <= end:
   ffprint('Loading traj %s' %(start))
-  u.load_new(%sproduction.%s.dcd' %(traj_loc, start))     # Load a new trajectory into the universe
+  u.load_new('%sproduction.%s.dcd' %(traj_loc, start))     # Load a new trajectory into the universe
   ffprint('WORK!")
   for i in range(nSel):
     sel1 = u_sel[i][1]                  # First selection from sel_list
